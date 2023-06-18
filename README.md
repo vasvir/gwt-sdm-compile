@@ -31,7 +31,7 @@ self.
 
 There are no plans yet to release this extension officially. Since it
 addresses developers and not the generally public this is not required.
-A developer can easily clone it from GitHub and install it directory from
+A developer can easily clone it from GitHub and install it directly from
 the cloned directory.
 
 ## How it works

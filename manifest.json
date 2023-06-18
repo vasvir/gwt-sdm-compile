@@ -1,0 +1,31 @@
+{
+  "name": "GWT SDM Compile",
+  "version": "1.0",
+  "description": "Compile GWT multiple widgets in a document and iframe",
+  "permissions": ["activeTab", "scripting", "webNavigation", "tabs", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "web_accessible_resources": [{
+    "resources": ["scan.js", "compile.js"],
+    "matches": ["<all_urls>"]
+  }],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "img/compile16.png",
+      "24": "img/compile24.png",
+      "32": "img/compile32.png",
+      "48": "img/compile48.png",
+      "96": "img/compile96.png",
+      "128": "img/compile128.png"
+    }
+  },
+  "icons": {
+    "16": "img/compile16.png",
+    "24": "img/compile24.png",
+    "32": "img/compile32.png",
+    "48": "img/compile48.png",
+    "96": "img/compile96.png",
+    "128": "img/compile128.png"
+  },
+  "manifest_version": 3
+}

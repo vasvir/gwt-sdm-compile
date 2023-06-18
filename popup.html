@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GWT SDM Compile</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        text-align: right;
+      }
+
+      table, td, th {
+        border: 1px solid gray;
+        padding: 0.5rem;
+      }
+
+      input {
+        text-align: right;
+        border: none;
+        outline: none;
+      }
+      
+      button#save {
+        margin: 1rem;
+      }
+
+      #error {
+        border: 3px solid red;
+        padding: 1rem;
+      }
+    </style>
+    <script src="popup.js"></script>
+  </head>
+<body style="white-space: nowrap; text-align: center;">
+  <h1>GWT SDM Compile</h1>
+  <table id="list">
+    <tr>
+      <th>Module</th>
+      <th>Protocol</th>
+      <th>Host</th>
+      <th>Port</th>
+      <th>Stop</th>
+      <th>Compile</th>
+    </tr>
+  </table>
+  <button id="save" title="Saves the host:port configuration">Save</button>
+  <div id="error" style="display: none;"></div>
+</body>
+</html>

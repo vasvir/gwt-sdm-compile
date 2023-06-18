@@ -1,13 +1,13 @@
 function messageEventListener(event) {
     const message = event.data;
-    console.log('content.js got message: ', message);
+    //console.log('content.js got message: ', message);
 
     if (!message.hasOwnProperty('server_url') || !message.hasOwnProperty('module_name')) {
-        console.log("Unexpected message type: ", message);
+        console.error("Unexpected message type: ", message);
         return;
     }
 
-    console.log("removing listener from compilePageJs");
+    //console.log("removing listener from compilePageJs");
     removeEventListener('message', messageEventListener);
 
     __gwt_bookmarklet_params = message;
@@ -16,6 +16,6 @@ function messageEventListener(event) {
     document.head.appendChild(script);
 }
 
-console.log("compilePageJs for " + location);
+//console.log("compilePageJs for " + location);
 addEventListener('message', messageEventListener);
-console.log("compilePageJs for " + location + " received message");
+//console.log("compilePageJs for " + location + " received message");

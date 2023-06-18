@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Popup DOM fully loaded and parsed");
+    console.log("Starting GWT SDM Extension Popup");
     let tab;
     let currentModule = 0;
     let portOffset = 9876;
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const table = document.getElementById("list");
         //console.log("table: ", table);
         message.gwtActiveModules.forEach(function(module) {
-            console.log("Configuring module: " + currentModule);
+            //console.log("Configuring module: " + currentModule);
             const row = document.createElement('tr');
             row.id = "row:" + sender.frameId;
             row.classList.add("config");
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
             chrome.storage.local.get(config_key).then(
                 function(configs) {
                     const config = configs[config_key] || {};
-                    console.log("configuration: ", config);
+                    //console.log("configuration: ", config);
                     let host = "localhost";
                     if (config.hasOwnProperty('host') && config.host) {
                         host = config.host;
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 },
                 function(e) {
-                    console.log("Error: ", e);
+                    console.error("Error: ", e);
                     showError("Cannot retrieve configuration from local storage.");
                 }
             );
@@ -100,12 +100,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 chrome.scripting.executeScript({
                     target: {tabId: tab.id, frameIds: [sender.frameId]},
                     func: function() {
-                        console.log("Initializing compile content script for " + location);
+                        //console.log("Initializing compile content script for " + location);
 
                         const configListener = function(message, sender, sendResponse) {
-                            console.log("Got message from extension", message);
+                            //console.log("Got message from extension", message);
                             if (sender.tab) {
-                                console.log("Unexpected message from a tab.");
+                                console.log("Unexpected message from a tab: ", message);
                                 return;
                             }
 
@@ -115,38 +115,38 @@ document.addEventListener('DOMContentLoaded', function () {
                             }
 
                             chrome.runtime.onMessage.removeListener(configListener);
-                            console.log("configListener removed");
+                            //console.log("configListener removed");
 
                             const script = document.createElement('script');
                             script.src = chrome.runtime.getURL('compile.js');
                             script.onload = function() {
-                                console.log("compilePageJs loaded. Sending bookmarkletParams: ", message);
+                                //console.log("compilePageJs loaded. Sending bookmarkletParams: ", message);
                                 postMessage(message, origin);
                                 this.remove();
                             };
                             document.head.appendChild(script);
                         };
                         chrome.runtime.onMessage.addListener(configListener);
-                        console.log("Finalizing compile content script for " + location);
+                        //console.log("Finalizing compile content script for " + location);
                     }
                 }, function() {
-                    console.log("Sending bookmarkletParams to compile: ", bookmarkletParams);
+                    //console.log("Sending bookmarkletParams to compile: ", bookmarkletParams);
                     chrome.tabs.sendMessage(sender.tab.id, bookmarkletParams);
                 });
             });
 
             document.getElementById("stop:" + sender.frameId).addEventListener('click', function() {
-                console.log("Stop... " + sender.frameId);
+                console.log("Stopping Dev Mode... " + sender.frameId);
                 chrome.scripting.executeScript({
                     target: {tabId: tab.id, frameIds: [sender.frameId]},
                     func: function() {
-                        console.log("Initializing stop content script for " + location);
+                        //console.log("Initializing stop content script for " + location);
 
                         const toRemove = [];
                         for (let i = 0; i < sessionStorage.length; i++) {
                             const key = sessionStorage.key(i);
                             if (key.indexOf('__gwtDevModeHook:') == 0) {
-                                console.log('GOT YOU: ' + key);
+                                //console.log('Found __gwtDevModeHook: ' + key);
                                 toRemove.push(key);
                             }
                         }
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
 
                         location.reload();
-                        console.log("Finalizing stop content script for " + location);
+                        //console.log("Finalizing stop content script for " + location);
                     }
                 });
             });
@@ -180,18 +180,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         tab = tabs[0];
-        console.log("currentTab: " + tab.title);
+        //console.log("currentTab: " + tab.title);
         chrome.scripting.executeScript({
             target: {tabId: tab.id, allFrames: true},
             func: function() {
                     // content script
-                    console.log("Initializing scan content script for " + location);
+                    //console.log("Initializing scan content script for " + location);
 
                     function messageEventListener(event) {
                         const message = event.data;
-                        console.log('content.js got message: ', message);
+                        //console.log('content.js got message: ', message);
 
                         if (!message.hasOwnProperty('type') || message.type !== 'gwtActiveModules') {
+                            console.log("Unexpected message type: ", message);
                             return;
                         }
 

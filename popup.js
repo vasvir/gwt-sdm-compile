@@ -99,39 +99,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log("Compile... " + sender.frameId + " with bookmarkletParams: ", bookmarkletParams);
                 chrome.scripting.executeScript({
                     target: {tabId: tab.id, frameIds: [sender.frameId]},
-                    func: function() {
+                    args: [bookmarkletParams],
+                    func: function(bookmarkletParams) {
                         //console.log("Initializing compile content script for " + location);
-
-                        const configListener = function(message, sender, sendResponse) {
-                            //console.log("Got message from extension", message);
-                            if (sender.tab) {
-                                console.log("Unexpected message from a tab: ", message);
-                                return;
-                            }
-
-                            if (!message.hasOwnProperty('server_url') || !message.hasOwnProperty('module_name')) {
-                                console.log("Unexpected message type: ", message);
-                                return;
-                            }
-
-                            chrome.runtime.onMessage.removeListener(configListener);
-                            //console.log("configListener removed");
-
-                            const script = document.createElement('script');
-                            script.src = chrome.runtime.getURL('compile.js');
-                            script.onload = function() {
-                                //console.log("compilePageJs loaded. Sending bookmarkletParams: ", message);
-                                postMessage(message, origin);
-                                this.remove();
-                            };
-                            document.head.appendChild(script);
+                        const script = document.createElement('script');
+                        script.src = chrome.runtime.getURL('compile.js');
+                        script.onload = function() {
+                            //console.log("compilePageJs loaded. Sending bookmarkletParams: ", bookmarkletParams);
+                            postMessage(bookmarkletParams, origin);
+                            this.remove();
                         };
-                        chrome.runtime.onMessage.addListener(configListener);
+                        document.head.appendChild(script);
                         //console.log("Finalizing compile content script for " + location);
                     }
-                }, function() {
-                    //console.log("Sending bookmarkletParams to compile: ", bookmarkletParams);
-                    chrome.tabs.sendMessage(sender.tab.id, bookmarkletParams);
                 });
             });
 

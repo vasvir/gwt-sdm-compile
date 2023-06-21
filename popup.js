@@ -125,8 +125,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log("Stopping Dev Mode... " + sender.frameId);
                 chrome.scripting.executeScript({
                     target: {tabId: tab.id, frameIds: [sender.frameId]},
-                    func: function() {
+                    args: [module],
+                    func: function(module) {
                         //console.log("Initializing stop content script for " + location);
+                        sessionStorage.removeItem('__gwtDevModeHook:' + module);
+                        location.reload();
+                        //console.log("Finalizing stop content script for " + location);
+                    }
+                });
+            });
+
+            currentModuleIndex++;
+            //console.log("Next currentModuleIndex: " + currentModuleIndex);
+        }
+    });
+
+    document.getElementById("stopAll").addEventListener('click', function() {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            tab = tabs[0];
+            //console.log("currentTab: " + tab.title);
+            chrome.scripting.executeScript({
+                target: {tabId: tab.id, allFrames: true},
+                func: function() {
+                        // content script
+                        console.log("Initializing stopAll content script for " + location);
                         const toRemove = [];
                         for (let i = 0; i < sessionStorage.length; i++) {
                             const key = sessionStorage.key(i);
@@ -139,14 +161,9 @@ document.addEventListener('DOMContentLoaded', function () {
                             sessionStorage.removeItem(toRemove[i]);
                         }
                         location.reload();
-                        //console.log("Finalizing stop content script for " + location);
-                    }
-                });
+                    },
             });
-
-            currentModuleIndex++;
-            //console.log("Next currentModuleIndex: " + currentModuleIndex);
-        }
+        });
     });
 
     document.getElementById("save").addEventListener('click', function() {

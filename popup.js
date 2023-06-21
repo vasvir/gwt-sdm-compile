@@ -1,3 +1,5 @@
+"use strict";
+
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Starting GWT SDM Extension Popup");
     let tab;
@@ -41,7 +43,8 @@ document.addEventListener('DOMContentLoaded', function () {
         //console.log("gwtActiveModules: ", message.gwtActiveModules);
         const table = document.getElementById("list");
         //console.log("table: ", table);
-        message.gwtActiveModules.forEach(function(module) {
+        for (const module in message.gwtActiveModules) {
+            const isModuleCompiled = message.gwtActiveModules[module];
             console.log("Configuring currentModuleIndex: ", currentModuleIndex + " module: ", module);
             const row = document.createElement('tr');
             row.id = "row:" + sender.frameId;
@@ -114,7 +117,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
 
-            document.getElementById("stop:" + sender.frameId).addEventListener('click', function() {
+            
+            const stopButton = document.getElementById("stop:" + sender.frameId);
+            stopButton.disabled = !isModuleCompiled;
+
+            stopButton.addEventListener('click', function() {
                 console.log("Stopping Dev Mode... " + sender.frameId);
                 chrome.scripting.executeScript({
                     target: {tabId: tab.id, frameIds: [sender.frameId]},
@@ -139,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             currentModuleIndex++;
             //console.log("Next currentModuleIndex: " + currentModuleIndex);
-        });
+        }
     });
 
     document.getElementById("save").addEventListener('click', function() {

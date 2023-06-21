@@ -1,3 +1,5 @@
+"use strict";
+
 function messageEventListener(event) {
     const message = event.data;
     //console.log('content.js got message: ', message);
@@ -10,7 +12,7 @@ function messageEventListener(event) {
     //console.log("removing listener from compilePageJs");
     removeEventListener('message', messageEventListener);
 
-    __gwt_bookmarklet_params = message;
+    window.__gwt_bookmarklet_params = message;
     const script = document.createElement("script");
     script.src = message.server_url + "dev_mode_on.js";
     document.head.appendChild(script);

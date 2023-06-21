@@ -1,10 +1,11 @@
 "use strict";
 
+const portOffset = 9876;
+let currentModuleIndex = 0;
+
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Starting GWT SDM Extension Popup");
     let tab;
-    let currentModuleIndex = 0;
-    let portOffset = 9876;
 
     function showError(message) {
         const e = document.getElementById("error");
@@ -117,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
 
-            
             const stopButton = document.getElementById("stop:" + sender.frameId);
             stopButton.disabled = !isModuleCompiled;
 
@@ -179,40 +179,52 @@ document.addEventListener('DOMContentLoaded', function () {
         chrome.storage.local.set(config);
     });
 
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        tab = tabs[0];
-        //console.log("currentTab: " + tab.title);
-        chrome.scripting.executeScript({
-            target: {tabId: tab.id, allFrames: true},
-            func: function() {
-                    // content script
-                    //console.log("Initializing scan content script for " + location);
+    function scan() {
+        currentModuleIndex = 0;
+        document.querySelectorAll('table#list tr.config').forEach(row => {
+            row.remove();
+        });
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            tab = tabs[0];
+            //console.log("currentTab: " + tab.title);
+            chrome.scripting.executeScript({
+                target: {tabId: tab.id, allFrames: true},
+                func: function() {
+                        // content script
+                        //console.log("Initializing scan content script for " + location);
 
-                    function messageEventListener(event) {
-                        const message = event.data;
-                        //console.log('content.js got message: ', message);
+                        function messageEventListener(event) {
+                            const message = event.data;
+                            //console.log('content.js got message: ', message);
 
-                        if (!message.hasOwnProperty('type') || message.type !== 'gwtActiveModules') {
-                            console.log("Unexpected message type: ", message);
-                            return;
+                            if (!message.hasOwnProperty('type') || message.type !== 'gwtActiveModules') {
+                                console.log("Unexpected message type: ", message);
+                                return;
+                            }
+
+                            // send it to the extension
+                            chrome.runtime.sendMessage(event.data);
+                            removeEventListener('message', messageEventListener);
                         }
 
-                        // send it to the extension
-                        chrome.runtime.sendMessage(event.data);
-                        removeEventListener('message', messageEventListener);
-                    }
+                        addEventListener('message', messageEventListener);
 
-                    addEventListener('message', messageEventListener);
-
-                    const script = document.createElement('script');
-                    script.src = chrome.runtime.getURL('scan.js');
-                    script.onload = function() {
-                        //console.log("scanPageJs loaded");
-                        this.remove();
-                    };
-                    // console.log(script.textContent);
-                    document.head.appendChild(script);
-                },
+                        const script = document.createElement('script');
+                        script.src = chrome.runtime.getURL('scan.js');
+                        script.onload = function() {
+                            //console.log("scanPageJs loaded");
+                            this.remove();
+                        };
+                        // console.log(script.textContent);
+                        document.head.appendChild(script);
+                    },
+            });
         });
+    }
+
+    document.getElementById("scanAll").addEventListener('click', function() {
+        chrome.permissions.request({origins: ["<all_urls>"]});
+        scan();
     });
+    scan();
 }, false);

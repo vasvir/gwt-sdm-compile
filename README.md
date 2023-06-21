@@ -9,8 +9,8 @@ This extension replaces the following bookmarklets:
 It works in Firefox and Chrome and it is Manifest V3 based.
 
 The extension scans for all GWT modules in all frames (main window and
-iframes) but iframes with different origin do not work in Firefox
-currently.
+iframes). In firefox you need to click in the scanAll button to request
+an extra permission in order to work for iframes with different origins.
 
 ![Screenshot](img/screenshot.png)
 
@@ -24,7 +24,7 @@ https://vasvir.wordpress.com/2017/02/07/gwt-super-dev-mode-https-setup-in-7-step
 The extension is for GWT users, which are developers, and which should know
 what they are doing. Obviously if you use extensions like this that injects
 scripts left and right you may open your self some new security holes. If you
-have any doubts please review the source code (< 250 LOC) and decide for your
+have any doubts please review the source code (~ 250 LOC) and decide for your
 self.
 
 ## How to run it
@@ -32,7 +32,8 @@ self.
 There are no plans yet to release this extension officially. Since it
 addresses developers and not the generally public this is not required.
 A developer can easily clone it from GitHub and install it directly from
-the cloned directory.
+the cloned directory. There are many resources in the web on how to do this
+for both Firefox and Chrome.
 
 ## How it works
 
@@ -50,10 +51,6 @@ handles the actual compilation exactly as it was with the bookmarklets.
 
 ## Known Issues
 
-### IFrames support
-
-Scanning iframes works in Chrome but not in Firefox. Not sure why.
-
 ### Protection hurdles
 
 With the advent of Content Security Policies (CSP) and the automatic blocking
@@ -68,9 +65,9 @@ extension has all the access it requires even if it has to go the trampoline
 hoops described above.
 
 The problem is that dev_mode.js is served by the GWT codeserver and that
-means it is changed in sync with the codeserver as it is the only client of
-it. It won't be fun to incorporate the current dev_mode.js just to have a new
-incompatible one released the next day.
+means it is changed in lockstep with the codeserver as it is the only client
+of it. It won't be fun to incorporate the current dev_mode.js just to have a
+new incompatible one released the next day.
 
 So for now if you encounter problems with the compilation try to
 

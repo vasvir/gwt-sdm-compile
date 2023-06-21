@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Starting GWT SDM Extension Popup");
     let tab;
-    let currentModule = 0;
+    let currentModuleIndex = 0;
     let portOffset = 9876;
 
     function showError(message) {
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const table = document.getElementById("list");
         //console.log("table: ", table);
         message.gwtActiveModules.forEach(function(module) {
-            //console.log("Configuring module: " + currentModule);
+            console.log("Configuring currentModuleIndex: ", currentModuleIndex + " module: ", module);
             const row = document.createElement('tr');
             row.id = "row:" + sender.frameId;
             row.classList.add("config");
@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const hosts = row.getElementsByClassName("host");
             // try to find configuration in local storage
-            const current_module = currentModule;
             const config_key = module + ":" + proto;
             chrome.storage.local.get(config_key).then(
                 function(configs) {
@@ -71,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     for (let ie of hosts) {
                         ie.value = host;
                     }
-                    let port = portOffset + 2 * current_module + (proto === 'https' ? 1 : 0);
+                    let port = portOffset + 2 * currentModuleIndex + (proto === 'https' ? 1 : 0);
                     if (config.hasOwnProperty('port') && config.port) {
                         port = config.port;
                     }
@@ -121,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     target: {tabId: tab.id, frameIds: [sender.frameId]},
                     func: function() {
                         //console.log("Initializing stop content script for " + location);
-
                         const toRemove = [];
                         for (let i = 0; i < sessionStorage.length; i++) {
                             const key = sessionStorage.key(i);
@@ -133,15 +131,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         for (let i = 0; i < toRemove.length; i++) {
                             sessionStorage.removeItem(toRemove[i]);
                         }
-
                         location.reload();
                         //console.log("Finalizing stop content script for " + location);
                     }
                 });
             });
 
-            currentModule++;
-            //console.log("Next module: " + currentModule);
+            currentModuleIndex++;
+            //console.log("Next currentModuleIndex: " + currentModuleIndex);
         });
     });
 

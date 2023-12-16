@@ -30,7 +30,7 @@ self.
 ## How to run it
 
 There are no plans yet to release this extension officially. Since it
-addresses developers and not the generally public this is not required.
+addresses developers and not the general public this is not required.
 A developer can easily clone it from GitHub and install it directly from
 the cloned directory. There are many resources in the web on how to do this
 for both Firefox and Chrome.

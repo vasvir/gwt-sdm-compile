@@ -32,8 +32,19 @@ self.
 There are no plans yet to release this extension officially. Since it
 addresses developers and not the general public this is not required.
 A developer can easily clone it from GitHub and install it directly from
-the cloned directory. There are many resources in the web on how to do this
-for both Firefox and Chrome.
+the cloned directory. Here is how:
+
+* Chrome
+    * Go to chrome://extensions/
+    * Enable Developer mode (top-right)
+    * Load unpacked (top-left)
+    * Navigate to the cloned directory
+* Firefox
+    * Go to about:addons
+    * Go to the cog wheel / settings right to the title 'Manage Your Extensions'
+    * Debug Add-ons
+    * Load Temporary Add-on...
+    * Navigate to the cloned directory and select the manifest.json
 
 ## How it works
 
